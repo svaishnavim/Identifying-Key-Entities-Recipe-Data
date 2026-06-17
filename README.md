@@ -18,30 +18,84 @@ Tasks:
      - Drop rows with invalid data
      - Update & validate "input_length" and "pos_length"
 - Train Validation Splot (70 train- 30 val)
-  - Splitting the dataset
+  - Splitting the Dataset
      - Split the dataset into training and validation sets with a 70:30 ratio
      - Print the first 5 rows of both training & validation DFs
      - Extract data into "X_train", "X_val", "y_train", "y_val"
      - Display the number of unique labels present in "y_train"
 - Exploratory Recipe Data Analysis on Training Dataset
- - Data flattening & Token extraction
+ - Data flattening & Token Extraction
      - Define a "flatten_list" function and initialise the dataset name
      - Define and execute an "extract_and_validate_tokens" function
-  - Token categorisation & Frequency analysis
+  - Token Categorisation & Frequency Analysis
      - Define and execute a "categorize_tokens" functions
      - Define and execute a "get_top_frequent_items" function for ingredients and units
   - Visualisation & Insights
      - Define a "plot_top_items" function
      - Plot bar graphs for top ingredients and units in the training dataset
      - Provide insights based on the visualisation
+- Exploratory Recipe Data Analysis on Validation Dataset (OPTIONAL)
+  - Execute EDA on Validation Dataset with Insights
+     - Initialise the dataset name as "Validation"
+     - Utilise the functions defined in the previous section and perform EDA on validation dataset
+     - Generate bar plots for the top 10 ingredients and units in the validation dataset
+     - Provide insights based on the visualisation of the validation samples, comparing the findings with the training dataset analysis
+- Feature Extraction for CRF Model
+  - Define Feature Functions
+     - Define keywords for unit, quantity and cooking methods. Create a pattern to recognise numerical values
+     - Define a "word2features" function to extract features for each token, incorporating core, quantity/unit detection and contextual features
+  - Recipe Level Features
+     - Define a "sent2features" function to apply "word2features" to all tokens in a recipe
+  - Convert Data to Feature Sets
+     - Create "X_train_features" and "X_val_features" using "sent2features" on training & validation data
+     - Create "y_train_labels" and "y_val_labels" by converting "y_train" and "y_val" to lists
+     - Print the lengths of the training & validation feature sets and labels to confirm data consistency
+  - Applying Weights to Feature Sets
+     - Flatten "y_train_labels" to count individual labels
+     - Count label frequencies and calculate total samples
+     - Compute a "weight_dict" using the inverse frequencey method, penalising the "ingredient" label
+     - Define an "extract_features_with_class_weights" function to apply weights during feature extraction
+     - Create "X_train_weighted_features" and "X_val_weighted_features" by applying weights to the feature sets
+- Model Building & Training
+  - CRF Model Initialisation & Training
+     - Initialise a CRF model using "sklearn_crfsuite.CRF" with specified hyperparameters
+     - Set the "class_weight" attribute of the CRF model to the "weight_dict" calculated in the previous section
+     - Train the CRF model using the weighted training data
+  - Training Dataset Evaluation
+     - Predict labels for the training dataset using the trained CRF model
+     - Generate a flat classification report using "flat_classification_report" to evaluate the model's performance on the training dataset
+     - Create and print a confusion matric to visualise the model's predictions on the training dataset
+  - Save the CRF Model
+     - Save the trained CRF model
+- Prediction & Model Evaluation
+  - Validation Set Prediction and Evaluation
+     - Predict labels for the validation dataset using the trained CRF model
+     - Generate a flat classification report using "flat_classification_report" to evaluate the model's performance on the validation dataset
+     - Create and print a confusion matric to visualise the model's predictions on the validation dataset
+- Error Analysis on Validation Data
+  - Error Investigation
+     - Flatten labels, intialise error data
+     - Iterate and collect error information
+     - Create error DF, print accuracy
+     - Analyse errors by label type
+  - Validation Insights
+     - Provide insights from error analysis
 - Conclusion
-  - Recommendations to track and compare market capitalisation of the top global banks to evaluate competitiveness and dominance
-  - Suggestions to use cross-currency analysis (USD, GBP, EUR, INR) for consistent benchmarking of financial institutions across regions
-  - Propose continuous monitoring of market share concentration to identify growth opportunities for mid-tier banks
-  - Identify potential regions or banking segments for expansion by analysing gaps between tiers of banks and regional trends
+  - Concluding Insights
+     - Briefly summarise the project's key findings and insights
+     - Comment on CRF models' overall performance
+     - Mention any limitations or challenges encountered
 
 Python libraries used:
 - sklearn-crfsuite==0.5.0
 - spacy==3.5.3
-- pandas==2.2.2
-- matplotlib==3.10.0
+- pandas
+- matplotlib
+- numpy
+- fractions (to handle fractional values in numerical data)
+- collections (to count occurrences of elements in a list)
+- re (for regular expressions during text preprocessing)
+- json (to handle JSON data)
+- joblib (to save where required)
+- random
+- seaborn
